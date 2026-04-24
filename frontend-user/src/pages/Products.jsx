@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import ProductCard from "../components/ProductCard";
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "https://backend-8ojo.onrender.com"
+});
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -18,7 +22,7 @@ const Products = () => {
       const params = new URLSearchParams();
       if (searchTerm) params.append("q", searchTerm);
       if (category) params.append("category", category);
-      const res = await axios.get(`/api/products/search?${params}`);
+      const res = await API.get(`/api/products/search?${params}`);
       setProducts(res.data);
     } catch (err) {
       console.error(err);
