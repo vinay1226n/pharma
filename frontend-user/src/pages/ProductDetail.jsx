@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+const API = axios.create({
+  baseURL: "https://backend-8ojo.onrender.com"
+});
+
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -14,7 +18,7 @@ const ProductDetail = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/products`);
+      const res = await API.get(`/api/products`);
       const found = res.data.find((p) => p._id === id);
       setProduct(found || null);
     } catch (err) {
