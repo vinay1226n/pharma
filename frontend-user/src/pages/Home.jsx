@@ -9,8 +9,8 @@ const Home = () => {
           <p className="text-2xl md:text-3xl mb-12 opacity-90">
             Trusted Healthcare Solutions
           </p>
-          <a
-            href="https://pharma-p6it.vercel.app//products"
+         <Link
+            to="/products"
             className="bg-secondary text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-green-600 transition"
           >
             View Products
