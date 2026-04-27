@@ -9,7 +9,7 @@ const ProductCard = ({ product }) => {
       <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-6 overflow-hidden group-hover:scale-105 transition-transform">
         {product.image ? (
           <img
-            src={`http://localhost:5000${product.image}`}
+            src={`https://backend-8ojo.onrender.com${product.image}`}
             alt={product.name}
             className="w-full h-full object-cover"
           />
