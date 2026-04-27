@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "https://backend-8ojo.onrender.com"
-});
+import { Link, useParams } from "react-router-dom";
+import API from "../api";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -18,11 +14,11 @@ const ProductDetail = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const res = await API.get(`/api/products`);
-      const found = res.data.find((p) => p._id === id);
-      setProduct(found || null);
+      const res = await API.get(`/api/products/${id}`);
+      setProduct(res.data);
     } catch (err) {
       console.error(err);
+      setProduct(null);
     } finally {
       setLoading(false);
     }
@@ -46,32 +42,40 @@ const ProductDetail = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Product Not Found
           </h1>
-          <a
-            href="/products"
+          <Link
+            to="/products"
             className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-dark transition"
           >
             Back to Products
-          </a>
+          </Link>
         </div>
       </section>
     );
   }
 
+  const imageUrl = (() => {
+    if (!product?.image) return null;
+    const base = API.defaults.baseURL?.replace(/\/$/, "") || "";
+    if (product.image.startsWith("http")) return product.image;
+    if (product.image.startsWith("/")) return base ? `${base}${product.image}` : product.image;
+    return base ? `${base}/${product.image}` : `/${product.image}`;
+  })();
+
   return (
     <section className="py-24 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
-        <a
-          href="/products"
+        <Link
+          to="/products"
           className="inline-flex items-center text-primary hover:text-primary-dark font-medium mb-8"
         >
           ← Back to Products
-        </a>
+        </Link>
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="bg-white rounded-3xl shadow-2xl p-12">
             <div className="w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">
-              {product.image ? (
+              {imageUrl ? (
                 <img
-                  src={`http://localhost:5000${product.image}`}
+                  src={imageUrl}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />

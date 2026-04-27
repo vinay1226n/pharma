@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
+import API from "../api";
+
+const buildImageUrl = (path) => {
+  if (!path) return null;
+  const base = API.defaults.baseURL?.replace(/\/$/, "") || "";
+  if (path.startsWith("http")) return path;
+  if (path.startsWith("/")) return base ? `${base}${path}` : path;
+  return base ? `${base}/${path}` : `/${path}`;
+};
 
 const ProductCard = ({ product }) => {
+  const imageUrl = buildImageUrl(product.image);
+
   return (
     <Link
       to={`/products/${product._id}`}
@@ -9,7 +20,7 @@ const ProductCard = ({ product }) => {
       <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-6 overflow-hidden group-hover:scale-105 transition-transform">
         {product.image ? (
           <img
-            src={`https://backend-8ojo.onrender.com${product.image}`}
+            src={imageUrl}
             alt={product.name}
             className="w-full h-full object-cover"
           />

@@ -1,32 +1,41 @@
 import { useState, useEffect } from "react";
+import API from "../api";
 import ProductCard from "../components/ProductCard";
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "https://backend-8ojo.onrender.com"
-});
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [category]);
 
-  const fetchProducts = async (query = "") => {
+  const fetchProducts = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams();
-      if (searchTerm) params.append("q", searchTerm);
-      if (category) params.append("category", category);
-      const res = await API.get(`/api/products/search?${params}`);
+      setError("");
+      const base = API.defaults.baseURL?.replace(/\/$/, "") || "";
+      let res;
+      if (!searchTerm && !category) {
+        res = await API.get(`${base}/api/products`);
+      } else {
+        const params = new URLSearchParams();
+        if (searchTerm) params.append("q", searchTerm);
+        if (category) params.append("category", category);
+        res = await API.get(`${base}/api/products/search?${params}`);
+      }
       setProducts(res.data);
     } catch (err) {
       console.error(err);
+      setError("Unable to load products. Please try again.");
+      setProducts([]);
     } finally {
+      setLoading(false);
+    }
+  };
       setLoading(false);
     }
   };
@@ -86,6 +95,10 @@ const Products = () => {
           <div className="text-center py-20">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading products...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <p className="text-2xl text-red-500">{error}</p>
           </div>
         ) : (
           <div

@@ -32,10 +32,24 @@ router.get("/search", async (req, res) => {
   }
 });
 
+// GET /api/products/:id
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ msg: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 // POST /api/products - protected, upload image
 router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
     const { category, name, description } = req.body;
+    if (!category || !name || !description) {
+      return res.status(400).json({ msg: "Category, name, and description are required" });
+    }
     const product = new Product({
       category,
       name,
@@ -52,10 +66,14 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
 // PUT /api/products/:id - protected
 router.put("/:id", auth, upload.single("image"), async (req, res) => {
   try {
+    const { category, name, description } = req.body;
+    if (!category || !name || !description) {
+      return res.status(400).json({ msg: "Category, name, and description are required" });
+    }
     const updates = {
-      category: req.body.category,
-      name: req.body.name,
-      description: req.body.description,
+      category,
+      name,
+      description,
     };
     if (req.file) updates.image = `/uploads/${req.file.filename}`;
     const product = await Product.findByIdAndUpdate(req.params.id, updates, {
