@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Home = () => {
   return (
     <>
@@ -5,17 +7,18 @@ const Home = () => {
       <section className="pharma-banner text-white py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">Cladian Pharma</h1>
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            Cladian Pharma
+          </h1>
           <p className="text-2xl md:text-3xl mb-12 opacity-90">
             Trusted Healthcare Solutions
           </p>
-         <Link
+          <Link
             to="/products"
             className="bg-secondary text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-green-600 transition"
           >
             View Products
-         </Link>
-          </a>
+          </Link>
         </div>
       </section>
 
