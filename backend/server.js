@@ -11,9 +11,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const allowedOrigins = [
   process.env.FRONTEND_URL || "http://localhost:5173","http://localhost:5175",
-  process.env.ADMIN_FRONTEND_URL || "http://localhost:5174",
+  process.env.ADMIN_FRONTEND_URL || "http://localhost:5174","https://pharma-wheb-vinays-projects-310ecd4a.vercel.app/",
   process.env.FRONTEND_ADMIN_URL || "http://localhost:5174",
-  process.env.FRONTEND_USER_URL || "http://localhost:5173","https://pharma-wheb-vinays-projects-310ecd4a.vercel.app",
+  process.env.FRONTEND_USER_URL || "http://localhost:5173",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
