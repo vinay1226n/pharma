@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 
 const AuthContext = createContext();
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       loadAdmin(token);
     } else {
       setLoading(false);
@@ -26,12 +26,10 @@ export const AuthProvider = ({ children }) => {
 
   const loadAdmin = async (token) => {
     try {
-      const res = axios.get("/api/admin/me", {
-        // Assume me route or use token
+      const res = await API.get("/api/admin/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // For simplicity, use token
-      setAdmin({ token });
+      setAdmin(res.data);
     } catch {
       localStorage.removeItem("adminToken");
     } finally {
@@ -41,9 +39,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post("/api/admin/login", { email, password });
+      const res = await API.post("/api/admin/login", { email, password });
       localStorage.setItem("adminToken", res.data.token);
-      axios.defaults.headers.common["Authorization"] =
+      API.defaults.headers.common["Authorization"] =
         `Bearer ${res.data.token}`;
       setAdmin(res.data.admin);
       toast.success("Login successful!");
@@ -55,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("adminToken");
-    delete axios.defaults.headers.common["Authorization"];
+    delete API.defaults.headers.common["Authorization"];
     setAdmin(null);
     toast.success("Logged out");
   };

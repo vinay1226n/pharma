@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("/api/products");
+      const res = await API.get("/api/products");
       setProducts(res.data);
     } catch (err) {
       toast.error("Failed to fetch products");
@@ -39,10 +39,10 @@ const Dashboard = () => {
 
     try {
       if (editingId) {
-        await axios.put(`/api/products/${editingId}`, data);
+        await API.put(`/api/products/${editingId}`, data);
         toast.success("Product updated!");
       } else {
-        await axios.post("/api/products", data);
+        await API.post("/api/products", data);
         toast.success("Product added!");
       }
       setFormData({ category: "", name: "", description: "", image: null });
@@ -68,7 +68,7 @@ const Dashboard = () => {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
-      await axios.delete(`/api/products/${id}`);
+      await API.delete(`/api/products/${id}`);
       toast.success("Product deleted!");
       fetchProducts();
     } catch (err) {
@@ -239,7 +239,7 @@ const Dashboard = () => {
                       <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
                         {product.image ? (
                           <img
-                            src={`http://localhost:5000${product.image}`}
+                            src={product.image.startsWith("http") ? product.image : product.image.startsWith("/") ? `https://backend-8ojo.onrender.com${product.image}` : `https://backend-8ojo.onrender.com/uploads/${product.image}`}
                             alt={product.name}
                             className="w-full h-full object-cover"
                           />

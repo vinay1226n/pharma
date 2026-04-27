@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 
@@ -30,7 +30,7 @@ const ChangePassword = () => {
     }
     try {
       setLoading(true);
-      await axios.put("/api/admin/change-password", {
+      await API.put("/api/admin/change-password", {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
       });
