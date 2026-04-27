@@ -36,9 +36,6 @@ const Products = () => {
       setLoading(false);
     }
   };
-      setLoading(false);
-    }
-  };
 
   const categories = [
     "Antibiotics",

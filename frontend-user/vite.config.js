@@ -8,11 +8,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://backen-0dos.onrender.com",
         changeOrigin: true,
       },
       "/uploads": {
-        target: "http://localhost:5000",
+        target: "https://backen-0dos.onrender.com",
         changeOrigin: true,
       },
     },
