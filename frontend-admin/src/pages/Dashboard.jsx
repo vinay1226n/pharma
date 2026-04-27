@@ -239,7 +239,11 @@ const Dashboard = () => {
                       <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
                         {product.image ? (
                           <img
-                            src={product.image.startsWith("http") ? product.image : product.image.startsWith("/") ? `https://backend-8ojo.onrender.com${product.image}` : `https://backend-8ojo.onrender.com/uploads/${product.image}`}
+                            src={product.image.startsWith("http")
+                              ? product.image
+                              : product.image.startsWith("/")
+                              ? `${API.defaults.baseURL?.replace(/\/$/, "") || ""}${product.image}`
+                              : `${API.defaults.baseURL?.replace(/\/$/, "") || ""}/uploads/${product.image}`}
                             alt={product.name}
                             className="w-full h-full object-cover"
                           />
