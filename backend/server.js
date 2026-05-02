@@ -18,10 +18,14 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:5175",
   "https://pharma-navy-omega.vercel.app",
+<<<<<<< Updated upstream
   "https://pharma-wheb-vinays-projects-310ecd4a.vercel.app",
   "https://pharma-wheb.vercel.app",
   "https://pharma-p6it.vercel.app",
   "https://cladianpharm.com",
+=======
+  "https://pharma-wheb.vercel.app",
+>>>>>>> Stashed changes
 ];
 
 app.use(
@@ -40,7 +44,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from uploads directory
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 
 // Routes
 app.use("/api/admin", require("./routes/auth"));
