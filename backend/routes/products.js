@@ -1,7 +1,7 @@
 const express = require("express");
 const Product = require("../models/Product");
 const auth = require("../middleware/auth");
-const upload = require("../middleware/upload");
+const upload = require("../config/cloudinary");
 const router = express.Router();
 
 // GET /api/products
@@ -47,18 +47,24 @@ router.get("/:id", async (req, res) => {
 router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
     const { category, name, description } = req.body;
+
     if (!category || !name || !description) {
-      return res.status(400).json({ msg: "Category, name, and description are required" });
+      return res.status(400).json({
+        msg: "Category, name, and description are required",
+      });
     }
+
     const product = new Product({
       category,
       name,
       description,
-      image: req.file ? `/uploads/${req.file.filename}` : "",
+      image: req.file ? req.file.path : "",
     });
+
     await product.save();
     res.status(201).json(product);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: "Server error" });
   }
 });
@@ -67,21 +73,32 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
 router.put("/:id", auth, upload.single("image"), async (req, res) => {
   try {
     const { category, name, description } = req.body;
+
     if (!category || !name || !description) {
-      return res.status(400).json({ msg: "Category, name, and description are required" });
+      return res.status(400).json({
+        msg: "Category, name, and description are required",
+      });
     }
+
     const updates = {
       category,
       name,
       description,
     };
-    if (req.file) updates.image = `/uploads/${req.file.filename}`;
+
+    if (req.file) {
+      updates.image = req.file.path;
+    }
+
     const product = await Product.findByIdAndUpdate(req.params.id, updates, {
       new: true,
     });
+
     if (!product) return res.status(404).json({ msg: "Product not found" });
+
     res.json(product);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: "Server error" });
   }
 });
