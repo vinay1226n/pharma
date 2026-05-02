@@ -21,6 +21,28 @@ const Home = () => {
           </Link>
         </div>
       </section>
+       {/* SEO Content */}
+      <section className="py-16 bg-white px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-blue-700 mb-6">
+            Trusted Pharmaceutical Company in India
+          </h2>
+
+          <p className="text-gray-700 text-lg leading-8 mb-4">
+            Cladian Pharma is a trusted pharmaceutical company providing
+            high-quality healthcare solutions and pharma products in India.
+            We focus on delivering reliable pharmaceutical products with
+            quality, safety, and customer satisfaction.
+          </p>
+
+          <p className="text-gray-700 text-lg leading-8">
+            Our mission is to support better healthcare through trusted
+            medicines, reliable service, and professional pharmaceutical
+            solutions for customers and healthcare needs.
+          </p>
+        </div>
+      </section>
+
 
       {/* Features */}
       <section className="py-24 bg-white">
