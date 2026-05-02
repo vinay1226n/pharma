@@ -1,8 +1,26 @@
 const express = require("express");
 const Product = require("../models/Product");
 const auth = require("../middleware/auth");
-const upload = require("../config/cloudinary");
+const { upload, cloudinary } = require("../config/cloudinary");
+
 const router = express.Router();
+
+// Upload image to Cloudinary
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "cladian-products",
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      },
+    );
+
+    stream.end(fileBuffer);
+  });
+};
 
 // GET /api/products
 router.get("/", async (req, res) => {
@@ -18,14 +36,22 @@ router.get("/", async (req, res) => {
 router.get("/search", async (req, res) => {
   try {
     const { q, category } = req.query;
+
     const query = {};
-    if (q)
+
+    if (q) {
       query.$or = [
         { name: { $regex: q, $options: "i" } },
         { description: { $regex: q, $options: "i" } },
       ];
-    if (category) query.category = category;
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
     const products = await Product.find(query);
+
     res.json(products);
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
@@ -36,14 +62,18 @@ router.get("/search", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ msg: "Product not found" });
+
+    if (!product) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
+
     res.json(product);
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
   }
 });
 
-// POST /api/products - protected, upload image
+// POST /api/products
 router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
     const { category, name, description } = req.body;
@@ -54,14 +84,21 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
       });
     }
 
+    let imageUrl = "";
+
+    if (req.file) {
+      imageUrl = await uploadToCloudinary(req.file.buffer);
+    }
+
     const product = new Product({
       category,
       name,
       description,
-      image: req.file ? req.file.path : "",
+      image: imageUrl,
     });
 
     await product.save();
+
     res.status(201).json(product);
   } catch (err) {
     console.error(err);
@@ -69,7 +106,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
   }
 });
 
-// PUT /api/products/:id - protected
+// PUT /api/products/:id
 router.put("/:id", auth, upload.single("image"), async (req, res) => {
   try {
     const { category, name, description } = req.body;
@@ -87,14 +124,16 @@ router.put("/:id", auth, upload.single("image"), async (req, res) => {
     };
 
     if (req.file) {
-      updates.image = req.file.path;
+      updates.image = await uploadToCloudinary(req.file.buffer);
     }
 
     const product = await Product.findByIdAndUpdate(req.params.id, updates, {
       new: true,
     });
 
-    if (!product) return res.status(404).json({ msg: "Product not found" });
+    if (!product) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
 
     res.json(product);
   } catch (err) {
@@ -103,11 +142,15 @@ router.put("/:id", auth, upload.single("image"), async (req, res) => {
   }
 });
 
-// DELETE /api/products/:id - protected
+// DELETE /api/products/:id
 router.delete("/:id", auth, async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) return res.status(404).json({ msg: "Product not found" });
+
+    if (!product) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
+
     res.json({ msg: "Product deleted" });
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
@@ -115,3 +158,4 @@ router.delete("/:id", auth, async (req, res) => {
 });
 
 module.exports = router;
+
